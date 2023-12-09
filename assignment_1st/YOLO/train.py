@@ -2,7 +2,8 @@
 Main file for training Yolo model on Pascal VOC dataset
 
 """
-
+import os
+from os.path import join
 import torch
 import torchvision.transforms as transforms
 import torch.optim as optim
@@ -26,10 +27,12 @@ from loss import YoloLoss
 seed = 123
 torch.manual_seed(seed)
 
+# base_path = '/Users/sehwan/Desktop/datasets/data'
+
 # Hyperparameters etc. 
 LEARNING_RATE = 2e-5
-# DEVICE = "cuda" if torch.cuda.is_available else "cpu"
-DEVICE = "cpu"
+DEVICE = "cuda" if torch.cuda.is_available else "cpu"
+# DEVICE = "cpu"
 BATCH_SIZE = 16 # 64 in original paper but I don't have that much vram, grad accum?
 WEIGHT_DECAY = 0
 EPOCHS = 1000
@@ -37,8 +40,10 @@ NUM_WORKERS = 2
 PIN_MEMORY = True
 LOAD_MODEL = False
 LOAD_MODEL_FILE = "overfit.pth.tar"
-IMG_DIR = "./data/images"
-LABEL_DIR = "./data/labels"
+# IMG_DIR = "/Users/sehwan/Desktop/datasets/data/data/images"
+# LABEL_DIR = "/Users/sehwan/Desktop/datasets/data/data/labels"
+IMG_DIR = "../dataset/data/images"
+LABEL_DIR = "../dataset/data/labels"
 
 
 class Compose(object):
@@ -84,15 +89,17 @@ def main():
     if LOAD_MODEL:
         load_checkpoint(torch.load(LOAD_MODEL_FILE), model, optimizer)
 
+
     train_dataset = VOCDataset(
-        "./data/100examples.csv",
+        # os.path.join(base_path, "/data/100examples.csv"),
+        "../dataset/train.csv",
         transform=transform,
         img_dir=IMG_DIR,
         label_dir=LABEL_DIR,
     )
 
     test_dataset = VOCDataset(
-        "./data/test.csv", transform=transform, img_dir=IMG_DIR, label_dir=LABEL_DIR,
+        "../dataset/test.csv", transform=transform, img_dir=IMG_DIR, label_dir=LABEL_DIR,
     )
 
     train_loader = DataLoader(

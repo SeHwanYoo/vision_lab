@@ -240,6 +240,7 @@ def get_bboxes(
     pred_format="cells",
     box_format="midpoint",
     device="cuda",
+    # device="cpu",
 ):
     all_pred_boxes = []
     all_true_boxes = []
